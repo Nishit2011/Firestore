@@ -32,6 +32,7 @@ function renderCafe(doc) {
 
 //accessing firebase collection
 db.collection("cafes")
+  .where("city", "==", "Marioland")
   .get()
   .then(snapshot => {
     snapshot.docs.forEach(doc => {
