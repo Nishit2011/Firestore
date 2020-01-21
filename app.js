@@ -31,15 +31,15 @@ function renderCafe(doc) {
 }
 
 //accessing firebase collection
-db.collection("cafes")
-  .orderBy("name")
-  .get()
-  .then(snapshot => {
-    snapshot.docs.forEach(doc => {
-      // console.log(doc.data());
-      renderCafe(doc);
-    });
-  });
+// db.collection("cafes")
+//   .orderBy("name")
+//   .get()
+//   .then(snapshot => {
+//     snapshot.docs.forEach(doc => {
+//       // console.log(doc.data());
+//       renderCafe(doc);
+//     });
+//   });
 
 //Saving data
 form.addEventListener("submit", e => {
@@ -52,3 +52,20 @@ form.addEventListener("submit", e => {
   form.name.value = "";
   form.city.value = "";
 });
+
+//realtime listener
+db.collection("cafes")
+  .orderBy("city")
+  .onSnapshot(snapshot => {
+    let changes = snapshot.docChanges();
+    console.log(changes);
+    changes.forEach(change => {
+      if (change.type == "added") {
+        renderCafe(change.doc);
+      } else if (change.type == "removed") {
+        //fetching the li of the removed dom
+        let li = cafeList.querySelector("[data-id=" + change.doc.id + "]");
+        cafeList.removeChild(li);
+      }
+    });
+  });
